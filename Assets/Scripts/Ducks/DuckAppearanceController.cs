@@ -6,4 +6,9 @@ public class DuckAppearanceController : MonoBehaviour
     {
 
     }
+
+    public void MaskChange()
+    {
+
+    }
 }
