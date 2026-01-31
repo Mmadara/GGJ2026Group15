@@ -1,31 +1,32 @@
 using System.Collections;
 using UnityEngine;
 
+// ENUM DE EVENTOS
+public enum EventoRandom
+{
+    //CambioMascaraPatos,
+    //CambiarPatronMovimiento,
+    LucesParpadeantes,
+    LucesApagadas,
+    //CubrirRostroMascara,
+    ApagarLuzDerecha,
+    ApagarLuzIzquierda,
+    VisionBorrosa
+}
+
 public class ramdomenum : MonoBehaviour
 {
-    // ENUM DE EVENTOS
-    public enum EventoRandom
-    {
-        CambioMascaraPatos,
-        CambiarPatronMovimiento,
-        LucesParpadeantes,
-        LucesApagadas,
-        CubrirRostroMascara,
-        ApagarLuzDerecha,
-        ApagarLuzIzquierda,
-        VisionBorrosa
-    }
-
     [Header("CONFIGURACIÓN DE TIEMPOS")]
-    public float tiempoMinEvento = 10f;
-    public float tiempoMaxEvento = 25f;
+    public float tiempoMinEvento = 5f;
+    public float tiempoMaxEvento = 10f;
 
     private bool partidaActiva = false;
+    [SerializeField] private VisualObstacleController _visualObstacleController;
 
     // 🔹 LLAMAR DESDE EL BOTÓN PLAY
     public void IniciarEventos()
     {
-        if (partidaActiva) return;
+        //if (partidaActiva) return;
 
         partidaActiva = true;
         StartCoroutine(EventosAleatorios());
@@ -60,13 +61,13 @@ public class ramdomenum : MonoBehaviour
 
         switch (evento)
         {
-            case EventoRandom.CambioMascaraPatos:
+           /* case EventoRandom.CambioMascaraPatos:
                 CambioMascaraPatos();
                 break;
 
             case EventoRandom.CambiarPatronMovimiento:
                 CambiarPatronMovimiento();
-                break;
+                break;*/
 
             case EventoRandom.LucesParpadeantes:
                 LucesParpadeantes();
@@ -76,9 +77,9 @@ public class ramdomenum : MonoBehaviour
                 LucesApagadas();
                 break;
 
-            case EventoRandom.CubrirRostroMascara:
+            /*case EventoRandom.CubrirRostroMascara:
                 CubrirRostroMascara();
-                break;
+                break;*/
 
             case EventoRandom.ApagarLuzDerecha:
                 ApagarLuzDerecha();
@@ -113,13 +114,13 @@ public class ramdomenum : MonoBehaviour
     void LucesParpadeantes()
     {
         Debug.Log("💡⚡ Luces parpadeantes");
-        // Coroutine de parpadeo
+        _visualObstacleController.StartBlickingLight();
     }
 
     void LucesApagadas()
     {
         Debug.Log("🌑 Luces apagadas");
-        // Apagar iluminación general
+        _visualObstacleController.StartLightOff();
     }
 
     void CubrirRostroMascara()
@@ -131,18 +132,18 @@ public class ramdomenum : MonoBehaviour
     void ApagarLuzDerecha()
     {
         Debug.Log("➡️💡 Luz derecha apagada");
-        // Light derecha OFF
+        _visualObstacleController.CovertHalfTheScreen(Direction.Right);
     }
 
     void ApagarLuzIzquierda()
     {
         Debug.Log("⬅️💡 Luz izquierda apagada");
-        // Light izquierda OFF
+        _visualObstacleController.CovertHalfTheScreen(Direction.Left);
     }
 
     void VisionBorrosa()
     {
         Debug.Log("👁️‍🗨️ Visión borrosa");
-        // Post Processing / Blur
+        _visualObstacleController.StartBlurry();
     }
 }
