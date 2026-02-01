@@ -13,6 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/AplicationQuit.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/DuckPath.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/DuckPathSpawner.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/DuckRailMove.cs" root0="FORCE_HIGHLIGHTING" />
@@ -79,7 +80,7 @@
       <option name="presentableId" value="Default" />
       <updated>1769839085309</updated>
       <workItem from="1769839096413" duration="386000" />
-      <workItem from="1769886033090" duration="14500000" />
+      <workItem from="1769886033090" duration="16858000" />
     </task>
     <servers />
   </component>
