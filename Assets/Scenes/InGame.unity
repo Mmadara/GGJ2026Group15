@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 2051636985}
   - component: {fileID: 2051636988}
   - component: {fileID: 2051636987}
+  - component: {fileID: 2051636989}
   m_Layer: 0
   m_Name: GameplayController
   m_TagString: Untagged
@@ -294,7 +295,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79977f9bc45d88249bc810d02edfcafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _duckPrefab: {fileID: 590184643295291216, guid: 6e6817d5dd70273458904be39a22a556, type: 3}
+  _ducksAppearancesList: []
+  ducksToKill: 10
+  totalObjectivesToSpawn: 10
 --- !u!4 &2051636986
 Transform:
   m_ObjectHideFlags: 0
@@ -341,6 +344,25 @@ MonoBehaviour:
   _screenRightBlack: {fileID: 265028422}
   _screenLeftBlack: {fileID: 1376223499}
   _blurryScreen: {fileID: 46571870}
+--- !u!114 &2051636989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051636984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe366d639e37b764ea0adef7f3d22ec9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tiempoTotal: 120
+  textoTiempo: {fileID: 0}
+  audioSource: {fileID: 0}
+  sonidoFinal: {fileID: 0}
+  puntosPerdidosBoton: 10
+  puntosMaximos: 100
+  botonReducir: {fileID: 0}
 --- !u!1 &2065137925
 GameObject:
   m_ObjectHideFlags: 0
