@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
@@ -14,6 +15,7 @@ public class GameplayManager : MonoBehaviour
 
     [Header("Objective Budget")]
     [SerializeField] private int totalObjectivesToSpawn = 10;
+    private ramdomenum _events;
 
     public int DucksRemaining { get; private set; }
     public int ObjectivesLeftToSpawn { get; private set; }
@@ -33,6 +35,7 @@ public class GameplayManager : MonoBehaviour
 
     private void Start()
     {
+        _events = GetComponent<ramdomenum>();
         StartGame();
     }
 
@@ -41,6 +44,7 @@ public class GameplayManager : MonoBehaviour
         DucksRemaining = ducksToKill;
         ObjectivesLeftToSpawn = totalObjectivesToSpawn;
         State = GameStateType.Playing;
+        _events.IniciarEventos();
 
         Debug.Log($"Game Started | Kill:{DucksRemaining} | SpawnBudget:{ObjectivesLeftToSpawn}");
     }
@@ -48,6 +52,7 @@ public class GameplayManager : MonoBehaviour
     private void WinGame()
     {
         State = GameStateType.Win;
+        _events.DetenerEventos();
         Debug.Log("YOU WIN");
     }
 
