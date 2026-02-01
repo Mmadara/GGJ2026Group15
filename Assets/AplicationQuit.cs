@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ApplicationQuit : MonoBehaviour
 {
-    private void OnMouseDown()
+    public void OnMouseDown()
     {
         QuitGame();
     }
