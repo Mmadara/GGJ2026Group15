@@ -3,30 +3,49 @@ using UnityEngine;
 
 public class DuckController : MonoBehaviour
 {
-    [Header("MASK REFERENCES")]
-    [SerializeField] private GameObject[] masks;              // All masks
-    [SerializeField] private int objectiveMaskIndex = 0;      // Objective mask index
+    [Header("MASK REFERENCES")] [SerializeField]
+    private GameObject[] masks;
 
-    [Header("MASK TRANSITION")]
-    [SerializeField] private float fadeDuration = 0.35f;
+    [SerializeField] private int objectiveMaskIndex = 0;
 
-    [Header("GAMEPLAY")]
-    [SerializeField] private bool isObjective = false;
+    [Header("GAMEPLAY")] [SerializeField] private bool isObjective = false;
     [SerializeField] private bool destroyOnObjectiveClick = true;
+
+    [Header("RANDOM MASK SHOW")] [SerializeField, Range(0f, 1f)]
+    private float chanceToShowMask = 0.6f;
+
+    [SerializeField] private Vector2 randomOpenDelay = new Vector2(0.1f, 1.5f);
+    [SerializeField] private Vector2 randomVisibleTime = new Vector2(0.8f, 2.5f);
 
     public bool IsObjective => isObjective;
 
     private GameObject currentMask;
     private int currentMaskIndex = -1;
+
     private bool clicked;
-    private Coroutine maskRoutine;
+    private bool initialized;
+
+    private Coroutine autoShowRoutine;
 
     // =========================
     // UNITY
     // =========================
     private void Awake()
     {
-        SetupInitialMask();
+        // Apaga todas las máscaras
+        if (masks == null) return;
+
+        foreach (var m in masks)
+        {
+            if (m != null)
+                m.SetActive(false);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (autoShowRoutine != null)
+            StopCoroutine(autoShowRoutine);
     }
 
     private void OnMouseDown()
@@ -39,124 +58,69 @@ public class DuckController : MonoBehaviour
         if (isObjective && GameplayManager.Instance != null)
             GameplayManager.Instance.OnDuckKilled(true);
 
-        if (destroyOnObjectiveClick)
+        if (isObjective && destroyOnObjectiveClick)
             Destroy(gameObject);
     }
 
     // =========================
-    // MASK LOGIC
+    // MASK SETUP
     // =========================
-    private void SetupInitialMask()
+    private void Start()
     {
-        if (masks == null || masks.Length == 0)
-        {
-            Debug.LogError($"No masks assigned on {name}");
-            return;
-        }
-
-        foreach (var m in masks)
-            m.SetActive(false);
-
-        // Start NON objective
-        SetRandomMaskExcludingObjective();
+        autoShowRoutine = StartCoroutine(AutoShowMaskRoutine());
     }
 
-    /// <summary>
-    /// Sets this duck as objective or normal
-    /// </summary>
+    
     public void SetObjective(bool value)
     {
         isObjective = value;
-
         if (isObjective)
         {
-            ChangeMaskImmediate(objectiveMaskIndex);
+            currentMaskIndex = objectiveMaskIndex;
         }
         else
         {
-            SetRandomMaskExcludingObjective();
+            currentMaskIndex = GetRandomMaskIndexExcludingObjective();
         }
+            
     }
 
-    /// <summary>
-    /// Random mask EXCLUDING objective mask
-    /// </summary>
-    public void SetRandomMaskExcludingObjective()
+    private int GetRandomMaskIndexExcludingObjective()
     {
-        if (isObjective) return;
-        if (masks.Length <= 1) return;
+        if (masks.Length <= 1)
+            return objectiveMaskIndex;
 
-        int newIndex;
-        int safety = 0;
-
+        int index;
         do
         {
-            newIndex = Random.Range(0, masks.Length);
-            safety++;
-        }
-        while (
-            (newIndex == objectiveMaskIndex || newIndex == currentMaskIndex)
-            && safety < 20
-        );
+            index = Random.Range(0, masks.Length);
+        } while (index == objectiveMaskIndex);
 
-        ChangeMaskSmooth(newIndex);
+        return index;
     }
-
-    // =========================
-    // INTERNAL MASK CONTROL
-    // =========================
-    private void ChangeMaskSmooth(int newIndex)
+  
+    private IEnumerator AutoShowMaskRoutine()
     {
-        if (newIndex < 0 || newIndex >= masks.Length) return;
-
-        if (maskRoutine != null)
-            StopCoroutine(maskRoutine);
-
-        maskRoutine = StartCoroutine(ChangeMaskRoutine(newIndex));
-    }
-
-    private void ChangeMaskImmediate(int newIndex)
-    {
-        if (maskRoutine != null)
-            StopCoroutine(maskRoutine);
-
-        if (currentMask != null)
-            currentMask.SetActive(false);
-
-        currentMaskIndex = newIndex;
-        currentMask = masks[newIndex];
-        currentMask.SetActive(true);
-    }
-
-    private IEnumerator ChangeMaskRoutine(int newIndex)
-    {
-        if (currentMask != null)
+        while (!clicked)
         {
-            yield return Fade(currentMask, 1f, 0f);
-            currentMask.SetActive(false);
+            float delay = Random.Range(randomOpenDelay.x, randomOpenDelay.y);
+            yield return new WaitForSeconds(delay);
+
+            if (clicked) yield break;
+            if (Random.value > chanceToShowMask) continue;
+            if (currentMaskIndex < 0 || currentMaskIndex >= masks.Length) continue;
+
+            currentMask = masks[currentMaskIndex];
+            if (currentMask == null) continue;
+
+            currentMask.SetActive(true);
+
+            float visibleTime = Random.Range(randomVisibleTime.x, randomVisibleTime.y);
+            yield return new WaitForSeconds(visibleTime);
+
+            if (currentMask != null)
+                currentMask.SetActive(false);
         }
-
-        currentMaskIndex = newIndex;
-        currentMask = masks[newIndex];
-        currentMask.SetActive(true);
-
-        yield return Fade(currentMask, 0f, 1f);
     }
-
-    private IEnumerator Fade(GameObject obj, float from, float to)
-    {
-        CanvasGroup cg = obj.GetComponent<CanvasGroup>();
-        if (cg == null)
-            cg = obj.AddComponent<CanvasGroup>();
-
-        float t = 0f;
-        while (t < fadeDuration)
-        {
-            t += Time.deltaTime;
-            cg.alpha = Mathf.Lerp(from, to, t / fadeDuration);
-            yield return null;
-        }
-
-        cg.alpha = to;
-    }
+    
 }
