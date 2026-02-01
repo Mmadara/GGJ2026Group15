@@ -5,28 +5,25 @@ using TMPro;
 
 public class tiempodepartida : MonoBehaviour
 {
-    [Header("TIEMPO")]
-    public float tiempoTotal = 120f; // 2 minutos
+    [Header("TIEMPO")] public float tiempoTotal = 120f; // 2 minutos
     private float tiempoActual;
     private bool partidaActiva;
 
-    [Header("UI")]
-    public TextMeshProUGUI textoTiempo;
+    [Header("UI")] public TextMeshProUGUI textoTiempo;
 
-    [Header("SONIDO")]
-    public AudioSource audioSource;
+    [Header("SONIDO")] public AudioSource audioSource;
     public AudioClip sonidoFinal;
     private bool sonidoReproducido = false;
 
-    [Header("BOTÓN")]
-    public int puntosPerdidosBoton = 10;
+    [Header("BOTÓN")] public int puntosPerdidosBoton = 10;
     public int puntosMaximos = 100;
     public GameObject botonReducir;
-  void Start()
-{
-    botonReducir.SetActive(false);
-    ActualizarUI();
-}
+
+    void Start()
+    {
+        if (botonReducir != null) botonReducir?.SetActive(false);
+        ActualizarUI();
+    }
 
     void Update()
     {
@@ -52,12 +49,12 @@ public class tiempodepartida : MonoBehaviour
     // INICIAR PARTIDA
     public void IniciarPartida()
     {
-       tiempoActual = tiempoTotal;
-    partidaActiva = true;
-    sonidoReproducido = false;
+        tiempoActual = tiempoTotal;
+        partidaActiva = true;
+        sonidoReproducido = false;
 
-    botonReducir.SetActive(true);
-    ActualizarUI();
+        if (botonReducir != null) botonReducir?.SetActive(true);
+        ActualizarUI();
     }
 
     // MOSTRAR TIEMPO EN MM:SS
@@ -71,25 +68,26 @@ public class tiempodepartida : MonoBehaviour
     // REDUCCIÓN PROPORCIONAL A PUNTOS PERDIDOS
     // puntosPerdidos = cuantos perdió
     // puntosMaximos = total posible
-  // MÉTODO REAL (lógica)
-public void ReducirTiempoPorPuntos(int puntosPerdidos, int puntosMaximos)
-{
-    float porcentaje = (float)puntosPerdidos / puntosMaximos;
-    float reduccion = tiempoTotal * porcentaje;
+    // MÉTODO REAL (lógica)
+    public void ReducirTiempoPorPuntos(int puntosPerdidos, int puntosMaximos)
+    {
+        float porcentaje = (float)puntosPerdidos / puntosMaximos;
+        float reduccion = tiempoTotal * porcentaje;
 
-    tiempoActual -= reduccion;
+        tiempoActual -= reduccion;
 
-    if (tiempoActual < 0)
-        tiempoActual = 0;
+        if (tiempoActual < 0)
+            tiempoActual = 0;
 
-    ActualizarUI();
-}
+        ActualizarUI();
+    }
 
 // MÉTODO PARA EL BOTÓN (SIN PARÁMETROS)
-public void BotonReducirTiempo()
-{
-    ReducirTiempoPorPuntos(puntosPerdidosBoton, puntosMaximos);
-}
+    public void BotonReducirTiempo()
+    {
+        ReducirTiempoPorPuntos(puntosPerdidosBoton, puntosMaximos);
+    }
+
     void FinalizarPartida()
     {
         partidaActiva = false;
